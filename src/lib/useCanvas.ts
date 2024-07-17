@@ -5,18 +5,37 @@ export function useCanvas(canvas: HTMLCanvasElement) {
 
   function drawTiles(tiles: TileConfig[]) {
     tiles.forEach(tile => {
-      const hasColor =  !!tile.color;
-      const tileColor = hasColor ? tile.color! : 'black';
+      const hasFace = !!tile.face;
       const tileSize = 48;
       const x1 = tile.x * tileSize;
       const y1 = tile.y * tileSize;
-      context.fillStyle = tileColor;
-      context.fillRect(x1, y1, tileSize, tileSize);
 
-      if (!hasColor) {
-        const lineWidth = 1;
-        context.fillStyle = 'white';
-        context.fillRect(x1 + lineWidth, y1 + lineWidth, tileSize - (2 * lineWidth), tileSize - (2 * lineWidth));
+      if (hasFace) {
+        const faceX = tile.face!.x * tileSize;
+        const faceY = tile.face!.y * tileSize;
+        const image = tile.face!.tilemap;
+        context.drawImage(image, faceX, faceY, tileSize, tileSize, x1, y1, tileSize, tileSize);
+      } else {
+        // grid checker bg
+        const checkerFraction = 4;
+        const checkerSize = tileSize / checkerFraction;
+        for (let x = 0; x < checkerFraction; x++) {
+          for (let y = 0; y < checkerFraction; y++) {
+            const isWhite = ((x + y) % 2) === 0;
+            context.fillStyle = isWhite ? '#FFF' : '#DDD';
+            const cx = x1 + (checkerSize * x);
+            const cy = y1 + (checkerSize * y);
+            context.fillRect(cx, cy, checkerSize, checkerSize);
+          }
+        }
+
+        // grid
+        context.fillStyle = '#AAA';
+        context.fillRect(x1, y1, tileSize, 1);
+        context.fillRect(x1, y1 + (tileSize - 1), tileSize, 1);
+        context.fillRect(x1, y1, 1, tileSize);
+        context.fillRect(x1 + (tileSize - 1), y1, 1, tileSize);
+
       }
     });
   }

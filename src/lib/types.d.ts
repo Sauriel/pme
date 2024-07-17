@@ -1,7 +1,13 @@
+export type TilemapFace = {
+  tilemap: HTMLImageElement;
+  x: number;
+  y: number;
+}
+
 export type TileConfig = {
   x: number;
   y: number;
-  color: string | null;
+  face: TilemapFace | null
 }
 
 export type TileEvent = {
