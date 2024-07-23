@@ -8,7 +8,7 @@ export function useCanvas() {
     context = canvas.getContext('2d')!;
   }
 
-  function drawTiles(tiles: TileConfig[]) {
+  function drawTiles(tiles: TileConfig[], frame = 0) {
     tiles.forEach(tile => {
       const hasFace = !!tile.face;
       const tileSize = 48;
@@ -21,6 +21,8 @@ export function useCanvas() {
         const faceY = tile.face!.y * tileSize;
         const image = tile.face!.tilemap;
         context!.drawImage(image, faceX, faceY, tileSize, tileSize, x1, y1, tileSize, tileSize);
+      } else if (tile.tile) {
+        tile.tile.tilemap.draw(context!, tile.tile.tile, x1, y1, frame);
       }
     });
   }

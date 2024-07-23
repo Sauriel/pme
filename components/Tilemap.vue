@@ -10,7 +10,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import type { TileConfig, TilemapFace } from "../types/types";
+import type { TileConfig, TileFace } from "../types/types";
+import { A1AnimatedAutoTilemap } from '~/types/tile/A1AnimatedAutoTile';
+import type { MapTile } from '~/types/tile/type';
 // type Props = {
 //   value: string;
 // }
@@ -39,18 +41,23 @@ onMounted(() => {
     a1Tile.value = new Image();
     a1Tile.value.src = '/tilemaps/winlu/Fantasy_Outside_A1.png'
     a1Tile.value.addEventListener('load', () => {
-      for (let y = 0; y < height.value; y++) {
-        for (let x = 0; x < width.value; x++) {
-          const face: TilemapFace = {
-            tilemap: a1Tile.value!,
-            x: x * 2,
-            y: y * 3,
-          };
-          const tile: TileConfig = { x, y, face };
-          tiles.value.push(tile);
-        }
-      }
-      drawTiles(tiles.value);
+      const tile: MapTile = {
+        continueBottom: false,
+        continueLeft: false,
+        continueRight: false,
+        continueTop: false,
+      };
+      tiles.value.push({ x: 0, y: 0, face: null, tile: { tilemap: new A1AnimatedAutoTilemap(a1Tile.value!, 0, 0), tile }});
+      tiles.value.push({ x: 1, y: 0, face: null, tile: { tilemap: new A1AnimatedAutoTilemap(a1Tile.value!, 48 * 8, 0), tile }});
+      tiles.value.push({ x: 2, y: 0, face: null, tile: { tilemap: new A1AnimatedAutoTilemap(a1Tile.value!, 0, 48 * 3), tile }});
+      tiles.value.push({ x: 3, y: 0, face: null, tile: { tilemap: new A1AnimatedAutoTilemap(a1Tile.value!, 48 * 8, 48 * 3), tile }});
+      tiles.value.push({ x: 4, y: 0, face: null, tile: { tilemap: new A1AnimatedAutoTilemap(a1Tile.value!, 0, 48 * 6), tile }});
+      tiles.value.push({ x: 5, y: 0, face: null, tile: { tilemap: new A1AnimatedAutoTilemap(a1Tile.value!, 48 * 8, 48 * 6), tile }});
+      tiles.value.push({ x: 6, y: 0, face: null, tile: { tilemap: new A1AnimatedAutoTilemap(a1Tile.value!, 0, 48 * 9), tile }});
+      tiles.value.push({ x: 7, y: 0, face: null, tile: { tilemap: new A1AnimatedAutoTilemap(a1Tile.value!, 48 * 8, 48 * 9), tile }});
+      const FPS = 5;
+      let frame = 0;
+      setInterval(() => drawTiles(tiles.value, frame++), 1000 / FPS);
     });
   }
 });
