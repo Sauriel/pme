@@ -12,7 +12,6 @@
 <script setup lang="ts">
 import { ref, onMounted, effect } from 'vue';
 import type { TileConfig } from "../types/types";
-import { useCanvas } from '../composables/useCanvas';
 // type Props = {
 //   value: string;
 // }
@@ -26,7 +25,7 @@ import { useCanvas } from '../composables/useCanvas';
 
 const { initCanvas, drawTiles } = useCanvas();
 
-const canvas = ref<HTMLCanvasElement>(null);
+const canvas = ref<HTMLCanvasElement>();
 const width = ref<number>(30);
 const height = ref<number>(20);
 const tiles = ref<TileConfig[]>([]);
@@ -37,6 +36,11 @@ const canvasWidth = computed<number>(() => 48 * width.value);
 const canvasHeight = computed<number>(() => 48 * height.value);
 
 onMounted(() => {
+  if (!currentTileFace.value) {
+    currentTileFace.value = new Image();
+    currentTileFace.value.src = '/tilemaps/winlu/Fantasy_Outside_A2.png'
+    currentTileFace.value.addEventListener('load', () => console.log('tile face loaded'));
+  }
   initCanvas(canvas.value!);
   for (let y = 0; y < height.value; y++) {
     for (let x = 0; x < width.value; x++) {
@@ -47,9 +51,6 @@ onMounted(() => {
 
 effect(() => {
   drawTiles(tiles.value);
-  currentTileFace.value = new Image();
-  currentTileFace.value.src = '/tilemaps/winlu/Fantasy_Outside_A2.png'
-  currentTileFace.value.addEventListener('load', () => console.log('tile face loaded'));
 });
 
 function drawOnMousePosition(event: MouseEvent) {
